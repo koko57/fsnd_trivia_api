@@ -28,7 +28,15 @@ class TriviaTestCase(unittest.TestCase):
     def tearDown(self):
         """Executed after reach test"""
         pass
-
+    
+    def test_get_paginated_questions(self):
+        res = self.client().get('/questions')
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['questions_count'])
+        self.assertTrue(len(data['questions']))
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
