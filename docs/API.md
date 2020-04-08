@@ -35,7 +35,7 @@ Fetches a list of categories dictionaries with keys `id` and `type`
 ```
 
 
-####GET '/questions'
+#### GET '/questions'
 
 Returns a list of questions, categories, success value, and total number of questions
 Questions are paginated in groups of 10.
