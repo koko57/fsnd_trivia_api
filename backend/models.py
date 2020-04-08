@@ -27,13 +27,14 @@ Question
 
 '''
 
+
 class Question(db.Model):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
     question = Column(String)
     answer = Column(String)
-    category = Column(String)
+    category = Column(Integer, db.ForeignKey('categories.id'))
     difficulty = Column(Integer)
 
     def __init__(self, question, answer, category, difficulty):
@@ -62,16 +63,20 @@ class Question(db.Model):
             'difficulty': self.difficulty
         }
 
+
 '''
 Category
 
 '''
+
 
 class Category(db.Model):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)
     type = Column(String)
+    questions = db.relationship(
+        'Question', backref='question_category', lazy=True)
 
     def __init__(self, type):
         self.type = type

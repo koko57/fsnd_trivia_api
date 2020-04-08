@@ -23,7 +23,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
     @app.after_request
     def after_request(response):
@@ -34,7 +34,6 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Credentials',
                              'true')
 
-        print(response)
         return response
 
     @app.route('/questions')
@@ -63,14 +62,15 @@ def create_app(test_config=None):
     @app.route('/questions', methods=['POST'])
     def add_a_question():
         body = request.get_json()
-        
+
         question = body['question']
         answer = body['answer']
         category = body['category']
         difficulty = body['difficulty']
 
         try:
-            new_quesion = Question(question=question, answer=answer, category=category, difficulty=difficulty)
+            new_quesion = Question(
+                question=question, answer=answer, category=category, difficulty=difficulty)
             print(question)
             new_quesion.insert()
         except:
@@ -79,6 +79,19 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
         })
+
+    @app.route('/categories/<int:category_id>/questions')
+    def get_questions_by_category(category_id):
+        category = Category.query.filter_by(id=category_id).first()
+        questions = [question.format() for question in category.questions]
+        
+        return jsonify({
+            'success': True,
+            'questions': questions,
+            'total_questions': len(questions),
+            'current_category': category.format()
+        })
+
     '''
     TODO: 
     Create an endpoint to DELETE question using a question ID. 

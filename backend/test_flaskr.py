@@ -58,6 +58,21 @@ class TriviaTestCase(unittest.TestCase):
         
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
+    
+    def test_get_questions_by_category(self):
+        category_id = 1
+        res = self.client().get(f'/categories/{category_id}/questions')
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['current_category'])
+        self.assertTrue(data['questions'])
+        self.assertEqual(data['current_category']['id'], category_id)
+        
+        for question in data['questions']:
+            self.assertEqual(question['category'], category_id)
+
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
