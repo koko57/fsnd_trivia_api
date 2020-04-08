@@ -1,15 +1,15 @@
-#TRIVIA API ENDPOINTS
+# TRIVIA API ENDPOINTS
 ---
 
-##Getting Started
+## Getting Started
 The app can only be run locally. 
 
 **Base URL:** http://localhost:5000/ (backend)
 **Authentication:**  neither authentication nor API keys are required
 
-##Endpoints
+## Endpoints
 
-####GET '/categories'
+#### GET '/categories'
 
 Fetches a list of categories dictionaries with keys `id` and `type`
 
@@ -82,7 +82,7 @@ curl http://localhost:5000/questions
 ```
 
 
-###GET '/categories/:category_id/questions'
+### GET '/categories/:category_id/questions'
 
 Gets list of questions from chosen category, success value and the total count of questions in chosen category and the category itself
 
@@ -127,7 +127,7 @@ curl http://localhost:5000/categories/1/questions
 ```
 
 
-####POST '/questions'
+#### POST '/questions'
 
 Creates a new question using the submitted data (question, answer, difficulty, category). Returns the success value.
 
@@ -160,7 +160,7 @@ curl http://localhost:5000/questions -X POST -H "Content-Type: application/json"
 ```
 
 
-####POST '/questions/search'
+#### POST '/questions/search'
 
 Gets questions with submitted search term (case insensitive). Returns questions list, success value and total questions count.
 
@@ -193,7 +193,7 @@ curl http://localhost:5000/questions/search -X POST -H "Content-Type: applicatio
 ```
 
 
-####POST '/quizzes'
+#### POST '/quizzes'
 
 Gets one question of chosen category for the quiz. Returns a question, success value and information whether the question is the last one.
 
@@ -226,7 +226,7 @@ curl http://localhost:5000/quizzes -X POST -H "Content-Type: application/json" -
 ```
 
 
-####DELETE '/questions/:question_id'
+#### DELETE '/questions/:question_id'
 
 Creates a new question using the submitted data (question, answer, difficulty, category). Returns the success value.
 
@@ -246,7 +246,7 @@ curl http://localhost:5000/questions/21 -X DELETE
 ```
 
 
-##Error Handling
+## Error Handling
 Errors are returned as JSON objects in the following format:
 ```
 {
