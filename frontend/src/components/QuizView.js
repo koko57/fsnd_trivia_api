@@ -19,7 +19,8 @@ class QuizView extends Component {
       numCorrect: 0,
       currentQuestion: {},
       guess: '',
-      forceEnd: false,
+      lastQuestion: false,
+      endGame: false,
     };
   }
 
@@ -47,39 +48,46 @@ class QuizView extends Component {
   };
 
   getNextQuestion = () => {
-    const previousQuestions = [...this.state.previousQuestions];
-    if (this.state.currentQuestion.id) {
-      previousQuestions.push(this.state.currentQuestion.id);
-    }
+    if (!this.state.lastQuestion) {
+      const previousQuestions = [...this.state.previousQuestions];
+      if (this.state.currentQuestion.id) {
+        previousQuestions.push(this.state.currentQuestion.id);
+      }
+      if (previousQuestions.length === 5) {
+        this.setState({ endGame: true })
+      }
 
-    $.ajax({
-      url: `${BASE_URL}/quizzes`,
-      type: 'POST',
-      dataType: 'json',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        previous_questions: previousQuestions,
-        quiz_category: this.state.quizCategory.id,
-      }),
-      xhrFields: {
-        withCredentials: true,
-      },
-      crossDomain: true,
-      success: (result) => {
-        this.setState({
-          showAnswer: false,
-          previousQuestions: previousQuestions,
-          currentQuestion: result.question,
-          guess: '',
-          forceEnd: result.question ? false : true,
-        });
-        return;
-      },
-      error: (error) => {
-        alert('Unable to load question. Please try your request again');
-        return;
-      },
-    });
+      $.ajax({
+        url: `${BASE_URL}/quizzes`,
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          previous_questions: previousQuestions,
+          quiz_category: this.state.quizCategory.id,
+        }),
+        xhrFields: {
+          withCredentials: true,
+        },
+        crossDomain: true,
+        success: (result) => {
+          this.setState({
+            showAnswer: false,
+            previousQuestions: previousQuestions,
+            currentQuestion: result.question,
+            lastQuestion: result.last_question,
+            guess: '',
+          });
+          return;
+        },
+        error: (error) => {
+          alert('Unable to load question. Please try your request again');
+          return;
+        },
+      });
+    } else {
+      this.setState({ endGame: true });
+    }
   };
 
   submitGuess = (event) => {
@@ -102,7 +110,8 @@ class QuizView extends Component {
       numCorrect: 0,
       currentQuestion: {},
       guess: '',
-      forceEnd: false,
+      lastQuestion: false,
+      endGame: false,
     });
   };
 
@@ -135,7 +144,6 @@ class QuizView extends Component {
     return (
       <div className='quiz-play-holder'>
         <div className='final-header'>
-          {' '}
           Your Final Score is {this.state.numCorrect}
         </div>
         <button
@@ -173,7 +181,11 @@ class QuizView extends Component {
           {evaluate ? 'You were correct!' : 'You were incorrect'}
         </div>
         <div className='quiz-answer'>{this.state.currentQuestion.answer}</div>
-        <button type="button" className='next-question button' onClick={this.getNextQuestion}>
+        <button
+          type='button'
+          className='next-question button'
+          onClick={this.getNextQuestion}
+        >
           Next Question
         </button>
       </div>
@@ -182,7 +194,7 @@ class QuizView extends Component {
 
   renderPlay() {
     return this.state.previousQuestions.length === questionsPerPlay ||
-      this.state.forceEnd ? (
+      this.state.endGame ? (
       this.renderFinalScore()
     ) : this.state.showAnswer ? (
       this.renderCorrectAnswer()

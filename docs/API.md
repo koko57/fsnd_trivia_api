@@ -34,6 +34,7 @@ Fetches a list of categories dictionaries with keys `id` and `type`
 
 ```
 
+
 ####GET '/questions'
 
 Returns a list of questions, categories, success value, and total number of questions
@@ -55,6 +56,7 @@ curl http://localhost:5000/questions
       },
         ...
     ],
+    "current_category": null, 
     "questions": [
       {
         "answer": "Apollo 13",
@@ -78,6 +80,7 @@ curl http://localhost:5000/questions
 }
 
 ```
+
 
 ###GET '/categories/:category_id/questions'
 
@@ -123,6 +126,7 @@ curl http://localhost:5000/categories/1/questions
 }
 ```
 
+
 ####POST '/questions'
 
 Creates a new question using the submitted data (question, answer, difficulty, category). Returns the success value.
@@ -131,22 +135,30 @@ Creates a new question using the submitted data (question, answer, difficulty, c
 - **Request Body:** (json) 
 ```
 {
-  "question": "Some question",
-  "answer": "Some answer",
+  "question": "Which planet has the most gravity?",
+  "answer": "Jupiter",
   "category": 1 (integer, 1-5),
-  "difficulty": 1 (integer, 1-5)
+  "difficulty": 2 (integer, 1-5)
 }
 ```
 - **Response**
 ```
-curl http://localhost:5000/questions -X POST -H "Content-Type: application/json" -d '{"question": "Some q","answer":"Some a", "category": 1, "difficulty": 4}' 
+curl http://localhost:5000/questions -X POST -H "Content-Type: application/json" -d '{"question": "Which planet has the most gravity?","answer":"Jupiter", "category": 1, "difficulty": 2}' 
 ```
 ```
 {
+  "message": "Question successfully created", 
+  "question": {
+    "answer": "Jupiter", 
+    "category": 1, 
+    "difficulty": 2, 
+    "question": "Which planet has the most gravity?"
+  }, 
   "success": true
 }
 
 ```
+
 
 ####POST '/questions/search'
 
@@ -183,7 +195,7 @@ curl http://localhost:5000/questions/search -X POST -H "Content-Type: applicatio
 
 ####POST '/quizzes'
 
-Gets one question of chosen category for the quiz.
+Gets one question of chosen category for the quiz. Returns a question, success value and information whether the question is the last one.
 
 - **Request Arguments:** None
 - **Request Body:** (json)
@@ -207,7 +219,8 @@ curl http://localhost:5000/quizzes -X POST -H "Content-Type: application/json" -
     "id": 20, 
     "question": "What is the heaviest organ in the human body?"
   }, 
-  "success": true
+  "success": true,
+  "last_question": false
 }
 
 ```
@@ -224,8 +237,11 @@ curl http://localhost:5000/questions/21 -X DELETE
 ```
 ```
 {
+  "id": 21, 
+  "message": "Question successfully deleted", 
   "success": true
 }
+
 
 ```
 

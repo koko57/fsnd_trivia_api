@@ -47,7 +47,8 @@ def create_app(test_config=None):
             'success': True,
             'questions': questions,
             'total_questions': len(results),
-            'categories': categories
+            'categories': categories,
+            'current_category': None
         })
 
     @app.route('/categories')
@@ -62,32 +63,29 @@ def create_app(test_config=None):
     @app.route('/questions', methods=['POST'])
     def add_a_question():
         body = request.get_json()
-        search_term = body.get('search_term', None)
 
-        if search_term:
-            searched_question = Question.query.filter(
-                Question.question.ilike(f'%{search_term}%')).all()
-            return jsonify({
-                'success': True,
-                'questions': [question.format() for question in searched_question],
-                'total_questions': len(searched_question)
-            })
-        else:
-            question = body['question']
-            answer = body['answer']
-            category = body['category']
-            difficulty = body['difficulty']
+        question = body['question']
+        answer = body['answer']
+        category = body['category']
+        difficulty = body['difficulty']
 
-            try:
-                new_quesion = Question(
-                    question=question, answer=answer, category=category, difficulty=difficulty)
-                new_quesion.insert()
-            except:
-                abort(422)
+        try:
+            new_quesion = Question(
+                question=question, answer=answer, category=category, difficulty=difficulty)
+            new_quesion.insert()
+        except:
+            abort(422)
 
-            return jsonify({
-                'success': True,
-            })
+        return jsonify({
+            'success': True,
+            'message': 'Question successfully created',
+            'question': {
+                'question': question,
+                'answer': answer,
+                'category': category,
+                'difficulty': difficulty,
+            }
+        })
 
     @app.route('/questions/search', methods=['POST'])
     def search_question():
@@ -125,27 +123,41 @@ def create_app(test_config=None):
         except:
             abort(422)
         return jsonify({
-            'success': True
+            'success': True,
+            'message': 'Question successfully deleted',
+            'id': question_id
         })
 
     @app.route('/quizzes', methods=['POST'])
     def get_next_question():
         body = request.get_json()
         category = body['quiz_category']
-        index = len(body['previous_questions'])
-
-        questions_query = Question.query.filter_by(
-            category=category)
-        questions = questions_query.all()
-
+        previous_questions = body['previous_questions']
+        index = len(previous_questions)
+        questions_query = Question.query
+        
+        if category != 0:
+            questions_query = Question.query.filter(
+                Question.category == category)
+        
+        questions = questions_query.filter(Question.id not in previous_questions).all()
+        
+        next_question = questions[index]
+        
+        if index == questions_query.count() - 1:
+            return jsonify({
+                'success': True,
+                'question': next_question.format(),
+                'last_question': True
+            })
+        
         if index > questions_query.count() - 1:
             abort(404)
 
-        next_question = questions[index]
-
         return jsonify({
             'success': True,
-            'question': next_question.format()
+            'question': next_question.format(),
+            'last_question': False
         })
 
     @app.errorhandler(400)

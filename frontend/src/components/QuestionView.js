@@ -88,7 +88,7 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `${BASE_URL}/questions`,
+      url: `${BASE_URL}/questions/search`,
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
@@ -119,10 +119,15 @@ class QuestionView extends Component {
           url: `${BASE_URL}/questions/${id}`,
           type: 'DELETE',
           success: (result) => {
-            this.getQuestions();
+            if (this.state.questions.length === 1) {
+              this.setState((prevState) => ({
+                page: prevState.page - 1,
+              }), () => this.getQuestions());
+            } else {
+              this.getQuestions();
+            }
           },
           error: (error) => {
-            console.log(error)
             alert('Unable to load questions. Please try your request again');
             return;
           },
