@@ -75,6 +75,7 @@ class TriviaTestCase(unittest.TestCase):
             
     def test_delete_question(self):
         question_id = Question.query.count()
+        print(question_id)
         res = self.client().delete(f'/questions/{question_id}')
         data = json.loads(res.data)
 
@@ -83,6 +84,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(question, None)
+        
+    def test_get_next_question(self):
+        quiz = {
+            'previous_questions': [], 
+            'quiz_category': 2
+        }
+        res = self.client().post('/quizzes', json=quiz)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.

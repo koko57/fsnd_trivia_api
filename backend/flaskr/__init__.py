@@ -8,6 +8,7 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
 def paginate_results(page, results):
     start = (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
@@ -82,26 +83,35 @@ def create_app(test_config=None):
     def get_questions_by_category(category_id):
         category = Category.query.filter_by(id=category_id).first()
         questions = [question.format() for question in category.questions]
-        
+
         return jsonify({
             'success': True,
             'questions': questions,
             'total_questions': len(questions),
             'current_category': category.format()
         })
-        
+
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         question = Question.query.filter_by(id=question_id).first()
-        deleted_id = question.id
         try:
             question.delete()
-            redirect(url_for('get_paginated_questions'))
         except:
             abort(422)
         return jsonify({
+            'success': True
+        })
+
+    @app.route('/quizzes', methods=['POST'])
+    def get_next_question():
+        body = request.get_json()
+        question = Question.query.filter_by(
+            category=body['quiz_category']).all()
+        next_question = question[len(body['previous_questions'])]
+        
+        return jsonify({
             'success': True,
-            'deleted_question': deleted_id,
+            'question': next_question.format()
         })
 
     '''
@@ -115,18 +125,6 @@ def create_app(test_config=None):
     Try using the word "title" to start. 
     '''
 
-
-    '''
-    TODO: 
-    Create a POST endpoint to get questions to play the quiz. 
-    This endpoint should take category and previous question parameters 
-    and return a random questions within the given category, 
-    if provided, and that is not one of the previous questions. 
-
-    TEST: In the "Play" tab, after a user selects "All" or a category,
-    one question at a time is displayed, the user is allowed to answer
-    and shown whether they were correct or not. 
-    '''
 
     '''
     TODO: 
