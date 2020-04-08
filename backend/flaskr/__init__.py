@@ -62,26 +62,40 @@ def create_app(test_config=None):
     @app.route('/questions', methods=['POST'])
     def add_a_question():
         body = request.get_json()
+        search_term = body.get('search_term', None)
 
-        question = body['question']
-        answer = body['answer']
-        category = body['category']
-        difficulty = body['difficulty']
+        if search_term:
+            searched_question = Question.query.filter(
+                Question.question.ilike(f'%{search_term}%')).all()
+            return jsonify({
+                'success': True,
+                'questions': [question.format() for question in searched_question],
+                'total_questions': len(searched_question)
+            })
+        else:
+            question = body['question']
+            answer = body['answer']
+            category = body['category']
+            difficulty = body['difficulty']
 
-        try:
-            new_quesion = Question(
-                question=question, answer=answer, category=category, difficulty=difficulty)
-            new_quesion.insert()
-        except:
-            abort(422)
+            try:
+                new_quesion = Question(
+                    question=question, answer=answer, category=category, difficulty=difficulty)
+                new_quesion.insert()
+            except:
+                abort(422)
 
-        return jsonify({
-            'success': True,
-        })
+            return jsonify({
+                'success': True,
+            })
 
     @app.route('/categories/<int:category_id>/questions')
     def get_questions_by_category(category_id):
         category = Category.query.filter_by(id=category_id).first()
+
+        if category is None:
+            abort(404)
+
         questions = [question.format() for question in category.questions]
 
         return jsonify({
@@ -105,31 +119,61 @@ def create_app(test_config=None):
     @app.route('/quizzes', methods=['POST'])
     def get_next_question():
         body = request.get_json()
-        question = Question.query.filter_by(
-            category=body['quiz_category']).all()
-        next_question = question[len(body['previous_questions'])]
-        
+        category = body['quiz_category']
+        index = len(body['previous_questions'])
+
+        questions_query = Question.query.filter_by(
+            category=category)
+        questions = questions_query.all()
+
+        if index > questions_query.count() - 1:
+            abort(404)
+
+        next_question = questions[index]
+
         return jsonify({
             'success': True,
             'question': next_question.format()
         })
 
-    '''
-    TODO: 
-    Create a POST endpoint to get questions based on a search term. 
-    It should return any questions for whom the search term 
-    is a substring of the question. 
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "Bad request"
+        }), 400
 
-    TEST: Search by any phrase. The questions list will update to include 
-    only question that include that string within their question. 
-    Try using the word "title" to start. 
-    '''
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 404,
+            "message": "Resource not found"
+        }), 404
 
+    @app.errorhandler(405)
+    def not_allowed(error):
+        return jsonify({
+            "success": False,
+            "error": 405,
+            "message": "Method not allowed"
+        }), 405
 
-    '''
-    TODO: 
-    Create error handlers for all expected errors 
-    including 404 and 422. 
-    '''
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            "success": False,
+            "error": 422,
+            "message": "Unprocessable request"
+        }), 422
+
+    @app.errorhandler(500)
+    def unprocessable(error):
+        return jsonify({
+            "success": False,
+            "error": 500,
+            "message": "Internal server error"
+        }), 500
 
     return app

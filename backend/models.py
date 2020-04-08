@@ -27,7 +27,6 @@ Question
 
 '''
 
-
 class Question(db.Model):
     __tablename__ = 'questions'
 

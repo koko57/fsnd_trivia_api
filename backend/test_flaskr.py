@@ -74,11 +74,12 @@ class TriviaTestCase(unittest.TestCase):
             self.assertEqual(question['category'], category_id)
             
     def test_delete_question(self):
-        question_id = Question.query.count()
-        print(question_id)
+        question_to_delete = Question.query.order_by(Question.id).all()[-1]
+        question_id = question_to_delete.id
+        
         res = self.client().delete(f'/questions/{question_id}')
         data = json.loads(res.data)
-
+        
         question = Question.query.filter_by(id=question_id).one_or_none()
         
         self.assertEqual(res.status_code, 200)
@@ -96,10 +97,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
+    def test_search_question(self):
+        search_term = 'What'
+        res = self.client().post('/questions', json={'search_term': search_term})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        
+        for question in data['questions']:
+            self.assertTrue(search_term.lower() in question['question'].lower())
 
 
 # Make the tests conveniently executable
