@@ -35,7 +35,7 @@ class TriviaTestCase(unittest.TestCase):
         
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
-        self.assertTrue(data['questions_count'])
+        self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
         
     def test_get_categories(self):
@@ -72,7 +72,17 @@ class TriviaTestCase(unittest.TestCase):
         
         for question in data['questions']:
             self.assertEqual(question['category'], category_id)
+            
+    def test_delete_question(self):
+        question_id = Question.query.count()
+        res = self.client().delete(f'/questions/{question_id}')
+        data = json.loads(res.data)
 
+        question = Question.query.filter_by(id=question_id).one_or_none()
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(question, None)
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.

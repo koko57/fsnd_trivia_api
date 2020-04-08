@@ -58,17 +58,15 @@ class Question(db.Model):
         return {
             'id': self.id,
             'question': self.question,
-            'answer': self.answer,
+            'answer': self.answer,  
             'category': self.category,
             'difficulty': self.difficulty
         }
-
 
 '''
 Category
 
 '''
-
 
 class Category(db.Model):
     __tablename__ = 'categories'
