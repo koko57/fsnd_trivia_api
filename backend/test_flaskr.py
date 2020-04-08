@@ -99,7 +99,7 @@ class TriviaTestCase(unittest.TestCase):
         
     def test_search_question(self):
         search_term = 'What'
-        res = self.client().post('/questions', json={'search_term': search_term})
+        res = self.client().post('/questions/search', json={'search_term': search_term})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)

@@ -128,7 +128,7 @@ curl http://localhost:5000/categories/1/questions
 Creates a new question using the submitted data (question, answer, difficulty, category). Returns the success value.
 
 - **Request Arguments:** None
-- **Request Body:**(json) 
+- **Request Body:** (json) 
 ```
 {
   "question": "Some question",
@@ -144,6 +144,38 @@ curl http://localhost:5000/questions -X POST -H "Content-Type: application/json"
 ```
 {
   "success": true
+}
+
+```
+
+####POST '/questions/search'
+
+Gets questions with submitted search term (case insensitive). Returns questions list, success value and total questions count.
+
+- **Request Arguments:** None
+- **Request Body:** (json) 
+```
+{
+  "search_term": "actor",
+}
+```
+- **Response**
+```
+curl http://localhost:5000/questions/search -X POST -H "Content-Type: application/json" -d '{"search_term": "actor"}' 
+```
+```
+{
+  "questions": [
+    {
+      "answer": "Tom Cruise", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 4, 
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 1
 }
 
 ```
