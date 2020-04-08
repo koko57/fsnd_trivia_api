@@ -1,7 +1,25 @@
 .form-view > label {
   padding: 0px 0px 10px;
+  margin: 0 auto;
+  width: 300px;
+  display: flex;
+}
+
+.form-view span {
+  min-width: 80px;
+  margin-right: 10px;
+}
+
+.form-view input {
+  flex: 1;
 }
 
 #add-form {
   text-align: center;
+}
+
+.form-view select {
+  min-width: 50px;
+  height: 30px;
+  margin-left: 10px;
 }

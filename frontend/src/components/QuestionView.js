@@ -154,6 +154,7 @@ class QuestionView extends Component {
                 <img className='category' src={`${category.type}.svg`} />
               </li>
             ))}
+            <li onClick={this.getQuestions}>All</li>
           </ul>
           <Search submitSearch={this.submitSearch} />
         </div>

@@ -114,15 +114,13 @@ class QuizView extends Component {
           <div className='play-category' onClick={this.selectCategory}>
             ALL
           </div>
-          {this.state.categories.map(category => {
+          {this.state.categories.map((category) => {
             return (
               <div
                 key={category.id}
                 value={category.id}
                 className='play-category'
-                onClick={() =>
-                  this.selectCategory(category)
-                }
+                onClick={() => this.selectCategory(category)}
               >
                 {category.type}
               </div>
@@ -140,10 +138,13 @@ class QuizView extends Component {
           {' '}
           Your Final Score is {this.state.numCorrect}
         </div>
-        <div className='play-again button' onClick={this.restartGame}>
-          {' '}
-          Play Again?{' '}
-        </div>
+        <button
+          type='button'
+          className='play-again button'
+          onClick={this.restartGame}
+        >
+          Play Again?
+        </button>
       </div>
     );
   }
@@ -172,10 +173,9 @@ class QuizView extends Component {
           {evaluate ? 'You were correct!' : 'You were incorrect'}
         </div>
         <div className='quiz-answer'>{this.state.currentQuestion.answer}</div>
-        <div className='next-question button' onClick={this.getNextQuestion}>
-          {' '}
-          Next Question{' '}
-        </div>
+        <button type="button" className='next-question button' onClick={this.getNextQuestion}>
+          Next Question
+        </button>
       </div>
     );
   }
