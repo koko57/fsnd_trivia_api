@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Question from './Question';
 import Search from './Search';
+import Pagination from './Pagination';
 import $ from 'jquery';
 import { config } from '../config';
 
@@ -18,6 +19,7 @@ class QuestionView extends Component {
       categories: [],
       currentCategory: null,
     };
+    this.selectPage = this.selectPage.bind(this);
   }
 
   componentDidMount() {
@@ -46,25 +48,6 @@ class QuestionView extends Component {
 
   selectPage(num) {
     this.setState({ page: num }, () => this.getQuestions());
-  }
-
-  createPagination() {
-    let pageNumbers = [];
-    let maxPage = Math.ceil(this.state.totalQuestions / 10);
-    for (let i = 1; i <= maxPage; i++) {
-      pageNumbers.push(
-        <span
-          key={i}
-          className={`page-num ${i === this.state.page ? 'active' : ''}`}
-          onClick={() => {
-            this.selectPage(i);
-          }}
-        >
-          {i}
-        </span>
-      );
-    }
-    return pageNumbers;
   }
 
   getByCategory = (id) => {
@@ -120,9 +103,12 @@ class QuestionView extends Component {
           type: 'DELETE',
           success: (result) => {
             if (this.state.questions.length === 1) {
-              this.setState((prevState) => ({
-                page: prevState.page - 1,
-              }), () => this.getQuestions());
+              this.setState(
+                (prevState) => ({
+                  page: prevState.page - 1,
+                }),
+                () => this.getQuestions()
+              );
             } else {
               this.getQuestions();
             }
@@ -179,7 +165,13 @@ class QuestionView extends Component {
               questionAction={this.questionAction(q.id)}
             />
           ))}
-          <div className='pagination-menu'>{this.createPagination()}</div>
+          <div className='pagination-menu'>
+            <Pagination
+              totalQuestions={this.state.totalQuestions}
+              page={this.state.page}
+              selectPage={this.selectPage}
+            />
+          </div>
         </div>
       </div>
     );
