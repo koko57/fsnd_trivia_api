@@ -4,6 +4,7 @@ import { config } from '../config';
 
 import '../stylesheets/QuizView.css';
 import ChooseCategory from '../components/ChooseCategory';
+import Quiz from '../components/Quiz';
 
 const { BASE_URL } = config;
 
@@ -16,6 +17,7 @@ class QuizView extends Component {
       quizCategory: null,
       previousQuestions: [],
       showAnswer: false,
+      correct: false,
       categories: [],
       numCorrect: 0,
       currentQuestion: {},
@@ -75,9 +77,6 @@ class QuizView extends Component {
 
   submitGuess = (event) => {
     event.preventDefault();
-    const formatGuess = this.state.guess
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
-      .toLowerCase();
     let evaluate = this.evaluateAnswer();
     this.setState({
       numCorrect: !evaluate ? this.state.numCorrect : this.state.numCorrect + 1,
@@ -90,6 +89,7 @@ class QuizView extends Component {
       quizCategory: null,
       previousQuestions: [],
       showAnswer: false,
+      correct: false,
       numCorrect: 0,
       currentQuestion: {},
       guess: '',
@@ -98,32 +98,7 @@ class QuizView extends Component {
     });
   };
 
-  renderPrePlay() {
-    return (
-      <ChooseCategory
-        categories={this.state.categories}
-        selectCategory={this.selectCategory}
-      />
-    );
-  }
-
-  renderFinalScore() {
-    return (
-      <div className='quiz-play-holder'>
-        <div className='final-header'>
-          Your Final Score is {this.state.numCorrect}
-        </div>
-        <button
-          type='button'
-          className='play-again button'
-          onClick={this.restartGame}
-        >
-          Play Again?
-        </button>
-      </div>
-    );
-  }
-
+  // TODO refactor this function
   evaluateAnswer = () => {
     const formatGuess = this.state.guess
       .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
@@ -131,59 +106,29 @@ class QuizView extends Component {
     const answerArray = this.state.currentQuestion.answer
       .toLowerCase()
       .split(' ');
-    return answerArray.includes(formatGuess);
+    this.setState({ correct: answerArray.includes(formatGuess) });
   };
 
-  renderCorrectAnswer() {
-    const formatGuess = this.state.guess
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
-      .toLowerCase();
-    let evaluate = this.evaluateAnswer();
-    return (
-      <div className='quiz-play-holder'>
-        <div className='quiz-question'>
-          {this.state.currentQuestion.question}
-        </div>
-        <div className={`${evaluate ? 'correct' : 'wrong'}`}>
-          {evaluate ? 'You were correct!' : 'You were incorrect'}
-        </div>
-        <div className='quiz-answer'>{this.state.currentQuestion.answer}</div>
-        <button
-          type='button'
-          className='next-question button'
-          onClick={this.getNextQuestion}
-        >
-          Next Question
-        </button>
-      </div>
-    );
-  }
-
-  renderPlay() {
-    return this.state.previousQuestions.length === questionsPerPlay ||
-      this.state.endGame ? (
-      this.renderFinalScore()
-    ) : this.state.showAnswer ? (
-      this.renderCorrectAnswer()
-    ) : (
-      <div className='quiz-play-holder'>
-        <div className='quiz-question'>
-          {this.state.currentQuestion.question}
-        </div>
-        <form onSubmit={this.submitGuess}>
-          <input type='text' name='guess' onChange={this.handleChange} />
-          <input
-            className='submit-guess button'
-            type='submit'
-            value='Submit Answer'
-          />
-        </form>
-      </div>
-    );
-  }
-
   render() {
-    return this.state.quizCategory ? this.renderPlay() : this.renderPrePlay();
+    return this.state.quizCategory ? (
+      <Quiz
+        previousQuestions={this.state.previousQuestions}
+        endGame={this.state.endGame}
+        numCorrect={this.state.numCorrect}
+        showAnswer={this.state.showAnswer}
+        correct={this.state.correct}
+        currentQuestion={this.state.currentQuestion}
+        handleChange={this.handleChange}
+        getNextQuestion={this.getNextQuestion}
+        submitGuess={this.submitGuess}
+        restartGame={this.restartGame}
+      />
+    ) : (
+      <ChooseCategory
+        categories={this.state.categories}
+        selectCategory={this.selectCategory}
+      />
+    );
   }
 }
 
