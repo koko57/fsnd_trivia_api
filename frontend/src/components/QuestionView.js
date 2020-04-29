@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import Question from './Question';
-import Search from './Search';
 import Pagination from './Pagination';
 import $ from 'jquery';
 import { config } from '../config';
 
 import '../stylesheets/App.css';
+import Categories from './Categories';
 
 const { BASE_URL } = config;
 
@@ -19,7 +19,6 @@ class QuestionView extends Component {
       categories: [],
       currentCategory: null,
     };
-    this.selectPage = this.selectPage.bind(this);
   }
 
   componentDidMount() {
@@ -46,9 +45,9 @@ class QuestionView extends Component {
     });
   };
 
-  selectPage(num) {
+  selectPage = (num) => {
     this.setState({ page: num }, () => this.getQuestions());
-  }
+  };
 
   getByCategory = (id) => {
     $.ajax({
@@ -125,30 +124,12 @@ class QuestionView extends Component {
   render() {
     return (
       <div className='question-view'>
-        <div className='categories-list'>
-          <h2
-            onClick={() => {
-              this.getQuestions();
-            }}
-          >
-            Categories
-          </h2>
-          <ul>
-            {this.state.categories.map((category) => (
-              <li
-                key={category.id}
-                onClick={() => {
-                  this.getByCategory(category.id);
-                }}
-              >
-                {category.type}
-                <img className='category' src={`${category.type}.svg`} />
-              </li>
-            ))}
-            <li onClick={this.getQuestions}>All</li>
-          </ul>
-          <Search submitSearch={this.submitSearch} />
-        </div>
+        <Categories
+          categories={this.state.categories}
+          getQuestions={this.getQuestions}
+          submitSearch={this.submitSearch}
+          getByCategory={this.getByCategory}
+        />
         <div className='questions-list'>
           <h2>Questions</h2>
           {this.state.questions.map((q, ind) => (
@@ -165,13 +146,11 @@ class QuestionView extends Component {
               questionAction={this.questionAction(q.id)}
             />
           ))}
-          <div className='pagination-menu'>
-            <Pagination
-              totalQuestions={this.state.totalQuestions}
-              page={this.state.page}
-              selectPage={this.selectPage}
-            />
-          </div>
+          <Pagination
+            totalQuestions={this.state.totalQuestions}
+            page={this.state.page}
+            selectPage={this.selectPage}
+          />
         </div>
       </div>
     );

@@ -5,7 +5,7 @@ const Pagination = (props) => {
   const pageNumbers = new Array(Math.ceil(totalQuestions / 10)).fill(1);
 
   return (
-    <div>
+    <div className='pagination-menu'>
       {pageNumbers.map((p, i) => {
         const pageNumber = p + i;
         return (
