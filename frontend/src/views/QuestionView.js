@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Question from './Question';
-import Pagination from './Pagination';
+import Question from '../components/Question';
+import Pagination from '../components/Pagination';
 import $ from 'jquery';
 import { config } from '../config';
 
 import '../stylesheets/App.css';
-import Categories from './Categories';
+import Categories from '../components/Categories';
 
 const { BASE_URL } = config;
 
