@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
+import axios from 'axios';
 import { config } from '../config';
 import '../stylesheets/FormView.css';
 
@@ -14,51 +14,33 @@ class FormView extends Component {
       difficulty: 1,
       category: 1,
       categories: [],
+      error: '',
     };
   }
 
-  componentDidMount() {
-    $.ajax({
-      url: `${BASE_URL}/categories`,
-      type: 'GET',
-      success: (result) => {
-        this.setState({ categories: result.categories });
-        return;
-      },
-      error: (error) => {
-        alert('Unable to load categories. Please try your request again');
-        return;
-      },
-    });
+  async componentDidMount() {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/categories`);
+      this.setState({ categories: data.categories });
+      
+    } catch (error) {
+      this.setState({ error });
+    }
   }
 
-  submitQuestion = (event) => {
+  submitQuestion = async (event) => {
     event.preventDefault();
-    $.ajax({
-      url: `${BASE_URL}/questions`,
-      type: 'POST',
-      dataType: 'json',
-      contentType: 'application/json',
-      data: JSON.stringify({
+    const body = {
         question: this.state.question,
         answer: this.state.answer,
         difficulty: this.state.difficulty,
         category: this.state.category,
-      }),
-      xhrFields: {
-        withCredentials: true,
-      },
-      crossDomain: true,
-      success: (result) => {
-        document.getElementById('add-question-form').reset();
-        alert(result.message);
-        return;
-      },
-      error: (error) => {
-        alert('Unable to add question. Please try your request again');
-        return;
-      },
-    });
+      } 
+    try {
+      await axios.post(`${BASE_URL}/questions`, body);
+    } catch (error) {
+      this.setState({ error });
+    }
   };
 
   handleChange = (event) => {

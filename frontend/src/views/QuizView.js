@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
+import axios from 'axios';
 import { config } from '../config';
 
 import '../stylesheets/QuizView.css';
+import ChooseCategory from '../components/ChooseCategory';
 
 const { BASE_URL } = config;
 
@@ -24,19 +25,14 @@ class QuizView extends Component {
     };
   }
 
-  componentDidMount() {
-    $.ajax({
-      url: `${BASE_URL}/categories`,
-      type: 'GET',
-      success: (result) => {
-        this.setState({ categories: result.categories });
-        return;
-      },
-      error: (error) => {
-        alert('Unable to load categories. Please try your request again');
-        return;
-      },
-    });
+  async componentDidMount() {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/categories`);
+      this.setState({ categories: data.categories });
+    } catch (error) {
+      //TODO: error handling
+      console.log(error);
+    }
   }
 
   selectCategory = ({ type, id = 0 }) => {
@@ -47,45 +43,31 @@ class QuizView extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  getNextQuestion = () => {
+  getNextQuestion = async () => {
     if (!this.state.lastQuestion) {
       const previousQuestions = [...this.state.previousQuestions];
       if (this.state.currentQuestion.id) {
         previousQuestions.push(this.state.currentQuestion.id);
       }
       if (previousQuestions.length === 5) {
-        this.setState({ endGame: true })
+        this.setState({ endGame: true });
       }
-
-      $.ajax({
-        url: `${BASE_URL}/quizzes`,
-        type: 'POST',
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify({
+      try {
+        const { data } = await axios.post(`${BASE_URL}/quizzes`, {
           previous_questions: previousQuestions,
           quiz_category: this.state.quizCategory.id,
-        }),
-        xhrFields: {
-          withCredentials: true,
-        },
-        crossDomain: true,
-        success: (result) => {
-          this.setState({
-            showAnswer: false,
-            previousQuestions: previousQuestions,
-            currentQuestion: result.question,
-            lastQuestion: result.last_question,
-            guess: '',
-          });
-          return;
-        },
-        error: (error) => {
-          // TODO: remove alerts
-          alert('Unable to load question. Please try your request again');
-          return;
-        },
-      });
+        });
+        this.setState({
+          showAnswer: false,
+          previousQuestions: previousQuestions,
+          currentQuestion: data.question,
+          lastQuestion: data.last_question,
+          guess: '',
+        });
+      } catch (error) {
+        //TODO: error handling
+        console.log(error);
+      }
     } else {
       this.setState({ endGame: true });
     }
@@ -118,26 +100,10 @@ class QuizView extends Component {
 
   renderPrePlay() {
     return (
-      <div className='quiz-play-holder'>
-        <div className='choose-header'>Choose Category</div>
-        <div className='category-holder'>
-          <div className='play-category' onClick={this.selectCategory}>
-            ALL
-          </div>
-          {this.state.categories.map((category) => {
-            return (
-              <div
-                key={category.id}
-                value={category.id}
-                className='play-category'
-                onClick={() => this.selectCategory(category)}
-              >
-                {category.type}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <ChooseCategory
+        categories={this.state.categories}
+        selectCategory={this.selectCategory}
+      />
     );
   }
 
