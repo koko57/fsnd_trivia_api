@@ -6,6 +6,7 @@ import { config } from '../config';
 
 import '../stylesheets/App.css';
 import Categories from '../components/Categories';
+import Modal from '../components/Modal';
 
 const { BASE_URL } = config;
 
@@ -16,6 +17,8 @@ const QuestionView = () => {
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [error, setError] = useState('');
+  const [deleteId, setDeleteId] = useState('');
+  const [modalOpened, setModalOpened] = useState(false);
 
   useEffect(() => {
     getQuestions();
@@ -24,7 +27,6 @@ const QuestionView = () => {
   const getQuestions = async () => {
     try {
       const { data } = await axios.get(`${BASE_URL}/questions?page=${page}`);
-      console.log(data.questions)
       setQuestions(data.questions);
       setTotalQuestions(data.total_questions);
       setCategories(data.categories);
@@ -59,24 +61,45 @@ const QuestionView = () => {
       setQuestions(data.questions);
       setTotalQuestions(data.total_questions);
       setCurrentCategory(data.current_category);
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
-  const questionAction = async (id) => {
-      if (window.confirm('are you sure you want to delete the question?')) {
-        await axios.delete(`${BASE_URL}/questions/${id}`);
+  const questionAction = (id) => {
+    setDeleteId(id);
+    setModalOpened(true);
+  };
 
-        if (questions.length === 1) {
-          setPage(page - 1)
-        } else {
-          getQuestions()
-        }
+  const onAccept = async () => {
+    await axios.delete(`${BASE_URL}/questions/${deleteId}`);
+    setDeleteId('');
+    if (questions.length === 1) {
+      setPage(page - 1);
+    } else {
+      getQuestions();
     }
   };
+
+  const onClose = () => {
+    setError('');
+    setModalOpened(false);
+  };
+
+  const modalProps = error
+    ? {
+        message: error,
+        onClose,
+      }
+    : {
+        message: 'Are you sure you want to delete this question?',
+        onAccept,
+        onClose,
+      };
+
   return (
     <div className='question-view'>
+      {modalOpened && <Modal {...modalProps} />}
       <Categories
         categories={categories}
         currentCategory={currentCategory}

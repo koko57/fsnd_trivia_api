@@ -22,7 +22,6 @@ class FormView extends Component {
     try {
       const { data } = await axios.get(`${BASE_URL}/categories`);
       this.setState({ categories: data.categories });
-      
     } catch (error) {
       this.setState({ error });
     }
@@ -31,11 +30,11 @@ class FormView extends Component {
   submitQuestion = async (event) => {
     event.preventDefault();
     const body = {
-        question: this.state.question,
-        answer: this.state.answer,
-        difficulty: this.state.difficulty,
-        category: this.state.category,
-      } 
+      question: this.state.question,
+      answer: this.state.answer,
+      difficulty: this.state.difficulty,
+      category: this.state.category,
+    };
     try {
       await axios.post(`${BASE_URL}/questions`, body);
     } catch (error) {
@@ -45,6 +44,13 @@ class FormView extends Component {
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
+  };
+
+  renderOptions = () => {
+    const options = new Array(5).fill(1);
+    return options.map((option, i) => (
+      <option value={option + i}>{option + i}</option>
+    ));
   };
 
   render() {
@@ -67,11 +73,7 @@ class FormView extends Component {
           <label>
             <span>Difficulty</span>
             <select name='difficulty' onChange={this.handleChange}>
-              <option value='1'>1</option>
-              <option value='2'>2</option>
-              <option value='3'>3</option>
-              <option value='4'>4</option>
-              <option value='5'>5</option>
+              {this.renderOptions()}
             </select>
           </label>
           <label>
