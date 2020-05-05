@@ -24,7 +24,6 @@ const QuestionView = () => {
   const getQuestions = async () => {
     try {
       const { data } = await axios.get(`${BASE_URL}/questions?page=${page}`);
-      console.log(data.questions)
       setQuestions(data.questions);
       setTotalQuestions(data.total_questions);
       setCategories(data.categories);
