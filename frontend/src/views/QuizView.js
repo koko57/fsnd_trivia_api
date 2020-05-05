@@ -5,6 +5,7 @@ import { config } from '../config';
 import '../stylesheets/QuizView.css';
 import ChooseCategory from '../components/ChooseCategory';
 import Quiz from '../components/Quiz';
+import { evaluateAnswer } from '../utils';
 
 const { BASE_URL } = config;
 
@@ -65,7 +66,6 @@ class QuizView extends Component {
           guess: '',
         });
       } catch (error) {
-        //TODO: error handling
         console.log(error);
       }
     } else {
@@ -75,10 +75,11 @@ class QuizView extends Component {
 
   submitGuess = (event) => {
     event.preventDefault();
-    let evaluate = this.evaluateAnswer();
+    let evaluate = evaluateAnswer(this.state.guess, this.state.currentQuestion);
     this.setState({
       numCorrect: !evaluate ? this.state.numCorrect : this.state.numCorrect + 1,
       showAnswer: true,
+      correct: evaluate,
     });
   };
 
@@ -94,17 +95,6 @@ class QuizView extends Component {
       lastQuestion: false,
       endGame: false,
     });
-  };
-
-  // TODO refactor this function
-  evaluateAnswer = () => {
-    const formatGuess = this.state.guess
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
-      .toLowerCase();
-    const answerArray = this.state.currentQuestion.answer
-      .toLowerCase()
-      .split(' ');
-    this.setState({ correct: answerArray.includes(formatGuess) });
   };
 
   render() {
