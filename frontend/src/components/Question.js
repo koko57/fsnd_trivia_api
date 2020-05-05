@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../stylesheets/Question.css';
 
 const Question = (props) => {
-  const { question, answer, category, difficulty, questionAction } = props;
+  const { question, answer, category, difficulty, id, questionAction } = props;
   const [showAnswer, setShowAnswer] = useState(false);
 
   const toggleAnswer = () => {
@@ -18,7 +18,7 @@ const Question = (props) => {
         <img
           src='delete.png'
           className='delete'
-          onClick={() => questionAction('DELETE')}
+          onClick={() => questionAction(id)}
         />
       </div>
       <button

@@ -8,8 +8,6 @@ import Quiz from '../components/Quiz';
 
 const { BASE_URL } = config;
 
-const questionsPerPlay = 5;
-
 class QuizView extends Component {
   constructor(props) {
     super();

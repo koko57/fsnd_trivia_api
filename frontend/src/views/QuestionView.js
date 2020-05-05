@@ -24,6 +24,7 @@ const QuestionView = () => {
   const getQuestions = async () => {
     try {
       const { data } = await axios.get(`${BASE_URL}/questions?page=${page}`);
+      console.log(data.questions)
       setQuestions(data.questions);
       setTotalQuestions(data.total_questions);
       setCategories(data.categories);
@@ -63,8 +64,7 @@ const QuestionView = () => {
     }
   };
 
-  const questionAction = (id) => async (action) => {
-    if (action === 'DELETE') {
+  const questionAction = async (id) => {
       if (window.confirm('are you sure you want to delete the question?')) {
         await axios.delete(`${BASE_URL}/questions/${id}`);
 
@@ -73,7 +73,6 @@ const QuestionView = () => {
         } else {
           getQuestions()
         }
-      }
     }
   };
   return (
@@ -90,13 +89,11 @@ const QuestionView = () => {
         {questions.map((q) => (
           <Question
             key={q.id}
-            question={q.question}
-            answer={q.answer}
+            {...q}
             category={
               categories.find((category) => category.id === q.category)?.type
             }
-            difficulty={q.difficulty}
-            questionAction={questionAction(q.id)}
+            questionAction={questionAction}
           />
         ))}
         <Pagination
