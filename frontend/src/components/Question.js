@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../stylesheets/Question.css';
+import Button from './Button';
 
 const Question = (props) => {
   const { question, answer, category, difficulty, id, questionAction } = props;
@@ -21,13 +22,12 @@ const Question = (props) => {
           onClick={() => questionAction(id)}
         />
       </div>
-      <button
+      <Button
         type='button'
         className='show-answer button'
         onClick={toggleAnswer}
-      >
-        {showAnswer ? 'Hide' : 'Show'} Answer
-      </button>
+        text={`${showAnswer ? 'Hide' : 'Show'} Answer`}
+      />
       {showAnswer && (
         <div className='answer-holder'>
           <span>Answer: {answer}</span>

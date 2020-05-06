@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Button from './Button';
 
 const Search = (props) => {
   const [query, setQuery] = useState('');
@@ -20,7 +21,7 @@ const Search = (props) => {
         value={query}
         onChange={handleInputChange}
       />
-      <input type='submit' value='Submit' className='button' />
+      <Button type='submit' className='button' text="Search" />
     </form>
   );
 };
