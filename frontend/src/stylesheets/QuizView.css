@@ -24,18 +24,6 @@
     color: dodgerblue;
 }
 
-.button {
-    min-width: 100px;
-    margin: 20px auto 0;
-    height: 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 5px;
-    background-color: dodgerblue;   
-    color: white;
-    padding: 3px 5px;
-}
 
 .quiz-question {
     margin: 12px;

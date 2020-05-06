@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from './Button';
 
 const questionsPerPlay = 5;
 
@@ -13,19 +14,13 @@ const Quiz = (props) => {
     submitGuess,
     getNextQuestion,
     handleChange,
-    restartGame
+    restartGame,
   } = props;
 
   return previousQuestions.length === questionsPerPlay || endGame ? (
     <div className='quiz-play-holder'>
       <div className='final-header'>Your Final Score is {numCorrect}</div>
-      <button
-        type='button'
-        className='play-again button'
-        onClick={restartGame}
-      >
-        Play Again?
-      </button>
+      <Button type='button' onClick={restartGame} text='Play Again?' />
     </div>
   ) : (
     <div className='quiz-play-holder'>
@@ -36,21 +31,19 @@ const Quiz = (props) => {
             {correct ? 'You were correct!' : 'You were incorrect'}
           </div>
           <div className='quiz-answer'>{currentQuestion.answer}</div>
-          <button
+          <Button
             type='button'
-            className='next-question button'
             onClick={getNextQuestion}
-          >
-            Next Question
-          </button>
+            text='Next Question'
+          />
         </>
       ) : (
         <form onSubmit={submitGuess}>
           <input type='text' name='guess' onChange={handleChange} />
-          <input
+          <Button
             className='submit-guess button'
             type='submit'
-            value='Submit Answer'
+            text='Submit Answer'
           />
         </form>
       )}

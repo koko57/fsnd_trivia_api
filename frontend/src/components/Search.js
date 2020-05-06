@@ -21,7 +21,7 @@ const Search = (props) => {
         value={query}
         onChange={handleInputChange}
       />
-      <Button type='submit' className='button' text="Search" />
+      <Button type='submit' text="Search" />
     </form>
   );
 };

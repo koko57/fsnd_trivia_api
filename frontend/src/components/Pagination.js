@@ -6,18 +6,19 @@ const Pagination = (props) => {
 
   return (
     <div className='pagination-menu'>
-      {pageNumbers.map((p, i) => {
-        const pageNumber = p + i;
-        return (
-          <span
-            key={pageNumber}
-            className={`page-num ${pageNumber === page ? 'active' : ''}`}
-            onClick={() => selectPage(pageNumber)}
-          >
-            {pageNumber}
-          </span>
-        );
-      })}
+      {pageNumbers.length > 1 &&
+        pageNumbers.map((p, i) => {
+          const pageNumber = p + i;
+          return (
+            <span
+              key={pageNumber}
+              className={`page-num ${pageNumber === page ? 'active' : ''}`}
+              onClick={() => selectPage(pageNumber)}
+            >
+              {pageNumber}
+            </span>
+          );
+        })}
     </div>
   );
 };
