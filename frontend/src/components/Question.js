@@ -13,10 +13,10 @@ const Question = (props) => {
     <div className='Question-holder'>
       <div className='Question'>{question}</div>
       <div className='Question-status'>
-        <img className='category' src={`${category}.svg`} />
+        <img className='category' src={`assets/${category}.svg`} />
         <div className='difficulty'>Difficulty: {difficulty}</div>
         <img
-          src='delete.png'
+          src='assets/delete.png'
           className='delete'
           onClick={() => questionAction(id)}
         />

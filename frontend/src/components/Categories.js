@@ -22,7 +22,7 @@ const Categories = (props) => {
             }}
           >
             {category.type}
-            <img className='category' src={`${category.type}.svg`} />
+            <img className='category' src={`assets/${category.type}.svg`} />
           </li>
         ))}
         <li onClick={getQuestions}>All</li>
